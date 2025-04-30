@@ -6,6 +6,7 @@ use crate::error::ErrorCode;
 use crate::{Accounts, AccountsExit, Key, Result, ToAccountInfos, ToAccountMetas};
 use solana_program::account_info::AccountInfo;
 use solana_program::instruction::AccountMeta;
+//import the pubkey from solana_program
 use solana_program::pubkey::Pubkey;
 use std::collections::BTreeSet;
 
@@ -45,6 +46,7 @@ impl<'info> ToAccountInfos<'info> for AccountInfo<'info> {
 
 impl<'info> AccountsExit<'info> for AccountInfo<'info> {}
 
+//just used for getting the pubkey of the account
 impl Key for AccountInfo<'_> {
     fn key(&self) -> Pubkey {
         *self.key
