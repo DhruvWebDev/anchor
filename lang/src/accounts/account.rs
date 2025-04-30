@@ -292,6 +292,7 @@ impl<'a, T: AccountSerialize + AccountDeserialize + Clone> Account<'a, T> {
     ///     ctx.accounts.user_to_create.set_inner(new_user);
     /// }
     /// ```
+    //like we pass the data that is being set to account in which the trait is implemented
     pub fn set_inner(&mut self, inner: T) {
         self.account = inner;
     }
@@ -334,6 +335,7 @@ impl<'info, B, T: AccountSerialize + AccountDeserialize + Owner + Clone> Account
 where
     T: AccountSerialize + AccountDeserialize + Owner + Clone,
 {
+    //This attribute instructs the compiler to not inline the function, even if it would typically do so. The function will be called in the usual way, with the function's code being separate from the calling code. 
     #[inline(never)]
     fn try_accounts(
         _program_id: &Pubkey,
@@ -399,10 +401,10 @@ impl<T: AccountSerialize + AccountDeserialize + Clone> AsRef<T> for Account<'_, 
         &self.account
     }
 }
-
+//it implements deref trait on account struct
 impl<T: AccountSerialize + AccountDeserialize + Clone> Deref for Account<'_, T> {
     type Target = T;
-
+    //deref (via * or Deref trait) turns &T into T.
     fn deref(&self) -> &Self::Target {
         &(self).account
     }
@@ -419,7 +421,8 @@ impl<T: AccountSerialize + AccountDeserialize + Clone> DerefMut for Account<'_, 
     }
 }
 
-impl<T: AccountSerialize + AccountDeserialize + Clone> Key for Account<'_, T> {
+//this is what allows us to so .key() on account 
+ impl<T: AccountSerialize + AccountDeserialize + Clone> Key for Account<'_, T> {
     fn key(&self) -> Pubkey {
         *self.info.key
     }
