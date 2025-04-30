@@ -152,13 +152,17 @@ impl<'info, T: ZeroCopy + Owner> AccountLoader<'info, T> {
 
     /// Returns a Ref to the account data structure for reading.
     pub fn load(&self) -> Result<Ref<T>> {
+        //gets the data of the account
         let data = self.acc_info.try_borrow_data()?;
+// This is the expected 8-byte array that Anchor generates for the account type T.
         let disc = T::DISCRIMINATOR;
+        //it verifies that the discriminator is set 
         if data.len() < disc.len() {
             return Err(ErrorCode::AccountDiscriminatorNotFound.into());
         }
-
+        //it here gets the disc from the account data
         let given_disc = &data[..disc.len()];
+                //It here verifies that the anchor discriminator matches
         if given_disc != disc {
             return Err(ErrorCode::AccountDiscriminatorMismatch.into());
         }
@@ -172,6 +176,8 @@ impl<'info, T: ZeroCopy + Owner> AccountLoader<'info, T> {
     pub fn load_mut(&self) -> Result<RefMut<T>> {
         // AccountInfo api allows you to borrow mut even if the account isn't
         // writable, so add this check for a better dev experience.
+
+        //because we are returning the mutable ref we need to first check the account is writable 
         if !self.acc_info.is_writable {
             return Err(ErrorCode::AccountNotMutable.into());
         }
@@ -194,8 +200,20 @@ impl<'info, T: ZeroCopy + Owner> AccountLoader<'info, T> {
         }))
     }
 
+    /*
+    🛠 1. During Initialization (using load_init())
+load_init() does NOT set the discriminator.
+
+It only ensures that the discriminator is currently all zeros (i.e., the account is fresh, uninitialized).
+
+It gives you a mutable reference (RefMut<T>) to write your fields manually (like setting counters, owners, etc.).
+
+BUT!
+➡️ Anchor itself (NOT your load_init() call) will automatically set the discriminator after the instruction finishes executing.
+    */
     /// Returns a `RefMut` to the account data structure for reading or writing.
     /// Should only be called once, when the account is being initialized.
+    //it is used for initailising the zero_copy account and bypasses the the adding of anchor_discriminator
     pub fn load_init(&self) -> Result<RefMut<T>> {
         // AccountInfo api allows you to borrow mut even if the account isn't
         // writable, so add this check for a better dev experience.
@@ -206,8 +224,11 @@ impl<'info, T: ZeroCopy + Owner> AccountLoader<'info, T> {
         let data = self.acc_info.try_borrow_mut_data()?;
 
         // The discriminator should be zero, since we're initializing.
+// This is the expected 8-byte array that Anchor generates for the account type T.
         let disc = T::DISCRIMINATOR;
+        //grabs the first 8bytes
         let given_disc = &data[..disc.len()];
+        //checks if any of the bytes(out of 8) is non-zero it means the anchor discriminator is already set.
         let has_disc = given_disc.iter().any(|b| *b != 0);
         if has_disc {
             return Err(ErrorCode::AccountDiscriminatorAlreadySet.into());
