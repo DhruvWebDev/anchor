@@ -2,6 +2,16 @@ use crate::Program;
 use heck::SnakeCase;
 use quote::quote;
 
+/*
+#[derive(Debug)]
+pub struct Program {
+    pub ixs: Vec<Ix>,
+    pub name: Ident,
+    pub docs: Option<Vec<String>>,
+    pub program_mod: ItemMod,
+    pub fallback_fn: Option<FallbackFn>,
+}
+*/
 pub fn generate(program: &Program) -> proc_macro2::TokenStream {
     let mut accounts = std::collections::HashMap::new();
 
