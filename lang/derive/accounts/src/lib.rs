@@ -635,6 +635,15 @@ use syn::parse_macro_input;
             .to_token_stream() spits out the code 
             .into() converts proc_macro2 to proc_macro
 */
+
+/*
+It automatically generates code that:
+Implements the Accounts trait for your struct.
+That trait gives your struct special capabilities:
+✅ Validates that the incoming accounts are correct (e.g., signer, init, mut, etc.).
+✅ Deserializes those accounts into Rust types (like Account<MyData>).
+✅ Makes the struct usable in functions like:
+*/
 #[proc_macro_derive(Accounts, attributes(account, instruction))]
 pub fn derive_accounts(item: TokenStream) -> TokenStream {
     parse_macro_input!(item as anchor_syn::AccountsStruct)
