@@ -3,9 +3,24 @@ use std::collections::HashSet;
 
 use crate::*;
 
+/*
+
+#[derive(Debug)]
+pub struct AccountsStruct {
+    // Name of the accounts struct.
+    pub ident: Ident,
+    // Generics + lifetimes on the accounts struct.
+    pub generics: Generics,
+    // Fields on the accounts struct.
+    pub fields: Vec<AccountField>,
+    // Instruction data api expression.
+    instruction_api: Option<Punctuated<Expr, Comma>>,
+}
+
+*/
 pub fn generate(f: &Field, accs: &AccountsStruct) -> proc_macro2::TokenStream {
     let constraints = linearize(&f.constraints);
-
+    //returns the proce_macro2::TokenStream if the contraint is rent
     let rent = constraints
         .iter()
         .any(|c| matches!(c, Constraint::RentExempt(ConstraintRentExempt::Enforce)))
