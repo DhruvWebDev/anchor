@@ -650,3 +650,7 @@ pub fn derive_accounts(item: TokenStream) -> TokenStream {
         .to_token_stream()
         .into()
 }
+
+/*
+Any constraints specified on fields by the #[account(..)] attribute are applied during deserialization. The #[instruction(..)] attribute can also be added to specify the instruction's arguments and make them accessible to the macro.
+*/
