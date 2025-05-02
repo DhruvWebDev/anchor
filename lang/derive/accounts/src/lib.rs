@@ -628,6 +628,13 @@ use syn::parse_macro_input;
 ///         </tr>
 ///     <tbody>
 /// </table>
+
+
+/*
+    parse_macro_input!(item as anchor_syn::AccountsStruct) thsi converts the token stream to ast of instance type acccount struct
+            .to_token_stream() spits out the code 
+            .into() converts proc_macro2 to proc_macro
+*/
 #[proc_macro_derive(Accounts, attributes(account, instruction))]
 pub fn derive_accounts(item: TokenStream) -> TokenStream {
     parse_macro_input!(item as anchor_syn::AccountsStruct)
