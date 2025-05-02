@@ -101,6 +101,7 @@ pub fn event(
 #[proc_macro]
 pub fn emit(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let data: proc_macro2::TokenStream = input.into();
+    //this return the rust code that would be executed at the compiler time...
     proc_macro::TokenStream::from(quote! {
         {
             anchor_lang::solana_program::log::sol_log_data(&[&anchor_lang::Event::data(&#data)]);
