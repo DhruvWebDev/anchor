@@ -53,6 +53,13 @@ pub fn program(
 /// [here]: https://github.com/coral-xyz/anchor/tree/v0.31.1/tests/declare-program
 #[proc_macro]
 pub fn declare_program(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    //A Token is the smallest source code unit that the Rust compiler can parse.
+//A TokenStream is a sequence of tokens representing a piece of source code. It can be passed to a procedural macro, allowing it to access and manipulate the individual tokens in the code.
+
+    /*
+    Tokens represent the smallest unit of source code recognized by the Rust compiler, and they are used to build more complex expressions and statements in a program.
+    */
+    //    parse_macro_input!(input as DeclareProgram) this converts the token_stream to ast of instance type DeclareProgram, then convert it to token stream(type proc_macro2 because of quote!)and .into converts it again to proc_macro::TokenStream
     parse_macro_input!(input as DeclareProgram)
         .to_token_stream()
         .into()
