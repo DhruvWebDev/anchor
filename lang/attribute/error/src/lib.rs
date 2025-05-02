@@ -54,12 +54,22 @@ pub fn error_code(
     args: proc_macro::TokenStream,
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
+    //parse the args as error arguement
     let args = match args.is_empty() {
         true => None,
         false => Some(parse_macro_input!(args as ErrorArgs)),
     };
+    //parse the error input as the syn::ItemEnum
     let mut error_enum = parse_macro_input!(input as syn::ItemEnum);
+    //this codegen will spit out error code 
+    /*
+    error_parser::parse(...): Reads the enum and attributes like #[msg(...)] to build an ErrorInput data structure.
+
+codegen::error::generate(...): Takes that structure and generates actual Rust code (using quote! internally).
+
+*/
     let error = codegen::error::generate(error_parser::parse(&mut error_enum, args));
+    //then we return
     proc_macro::TokenStream::from(error)
 }
 
@@ -114,3 +124,64 @@ fn create_error(error_code: Expr, source: bool, account_name: Option<Expr>) -> T
         )
     })
 }
+/*
+#[derive(Debug, Clone, Copy)]
+pub enum MyError {
+    Unauthorized = 6000,   // Error code base starts at 6000
+    InvalidAmount = 6001,
+}
+
+impl anchor_lang::error::ErrorCode for MyError {
+    fn code(&self) -> u32 {
+        match self {
+            MyError::Unauthorized => 6000,
+            MyError::InvalidAmount => 6001,
+        }
+    }
+
+    fn msg(&self) -> &str {
+        match self {
+            MyError::Unauthorized => "Unauthorized",
+            MyError::InvalidAmount => "Invalid amount",
+        }
+    }
+}
+
+impl From<MyError> for anchor_lang::error::Error {
+    fn from(e: MyError) -> anchor_lang::error::Error {
+        anchor_lang::error::Error::from(anchor_lang::error::AnchorError {
+            error_name: format!("{:?}", e), // "Unauthorized"
+            error_code_number: e.code(),    // 6000
+            error_msg: e.msg().to_string(), // "Unauthorized"
+            error_origin: None,             // error!() adds file/line
+            compared_values: None,
+        })
+    }
+}
+*/
+
+/*
+#[error_code] macro:
+
+Parses MyError
+
+Assigns error codes starting at 6000
+
+Implements ErrorCode + From<MyError> for Error
+
+error!() macro:
+
+Receives MyError::Unauthorized as a TokenStream
+
+Parses it into an Expr
+
+Passes it to create_error(error_code: Expr, ...)
+
+Generates an Error with:
+
+code: 6000
+
+msg: "Unauthorized access"
+
+origin: current file + line
+*/
