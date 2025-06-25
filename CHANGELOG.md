@@ -14,6 +14,9 @@ The minor version will be incremented upon a breaking change and the patch versi
 
 ### Fixes
 
+- docker: Upgrade `node` to 20.18.0 LTS ([#3687](https://github.com/solana-foundation/anchor/pull/3687)).
+- cli: Fix using deprecated commitment `recent` in migration scripts ([#3725](https://github.com/coral-xyz/anchor/pull/3725)).
+
 ### Breaking
 
 ## [0.31.1] - 2025-04-19
